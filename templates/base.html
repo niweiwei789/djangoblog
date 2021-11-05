@@ -1,9 +1,9 @@
-{% load staticfiles %}
+{% load static %}
 {% load blog_tags %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Black &amp; White</title>
+    <title>Hello Ni</title>
 
     <!-- meta -->
     <meta charset="UTF-8">
@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="{% static 'blog/css/pace.css' %}">
     <link rel="stylesheet" href="{% static 'blog/css/custom.css' %}">
     <link rel="stylesheet" href="{% static 'blog/css/highlights/github.css' %}">
+
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet">
 
     <style>
         span.highlighted {
@@ -35,7 +39,7 @@
         <div class="row">
             <div class="col-md-4 col-sm-5 col-xs-8">
                 <div class="logo">
-                    <h1><a href="{% url 'blog:index' %}"><b>Black</b> &amp; White</a></h1>
+                    <h1><a href="{% url 'blog:index' %}"><b>Hello</b> &amp; Ni</a></h1>
                 </div>
             </div><!-- col-md-4 -->
             <div class="col-md-8 col-sm-7 col-xs-4">
@@ -68,8 +72,8 @@
         </div>
     </header>
 </div>
-<div class="copyrights">Collect from <a href="http://www.cssmoban.com/">网页模板</a></div>
-<div class="copyrights">Modified by <a href="http://zmrenwu.com/">追梦人物的博客</a></div>
+<div class="copyrights">Collect from <a href="https://github.com/HelloGitHub-Team/HelloDjango-blog-tutorial">网页模板</a></div>
+<div class="copyrights">Modified by <a href="http://zmrenwu.com/">The Blog of XNW</a></div>
 
 <div class="content-body">
     <div class="container">
@@ -100,8 +104,7 @@
                     <ul>
                         {% for date in date_list %}
                             <li>
-                                <a href="{% url 'blog:archives' date.year date.month %}">{{ date.year }}
-                                    年 {{ date.month }} 月</a>
+                                <a href="{% url 'blog:archives' date.year date.month %}"> {{ date.year }} 年 {{ date.month }} 月</a>
                             </li>
                         {% empty %}
                             暂无归档！
@@ -149,9 +152,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <p class="copyright">&copy 2017 - 采集自<a href="http://www.cssmoban.com/"
-                                                        target="_blank" title="模板之家">模板之家</a>
-                    - 由<a href="http://zmrenwu.com/" title="网页模板" target="_blank">追梦人物的博客</a>修改
+                <p class="copyright">&copy 2020 - come from <a href="https://github.com/HelloGitHub-Team/HelloDjango-blog-tutorial"
+                                                        target="_blank" title="github">djangoblog</a>
+                    - 由<a href="http://zmrenwu.com/" title="网页模板" target="_blank">The Blog of XNW</a>修改
                 </p>
             </div>
         </div>

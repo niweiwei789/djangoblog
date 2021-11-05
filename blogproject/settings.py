@@ -24,7 +24,7 @@ SECRET_KEY = 'i3k%m-808v3_)^h7975iw4v&fl5chq41^19j@u+b*vx7dvw*q$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'haystack',
     'blog',
+    'tinymce',
     'comments',
+    'mdeditor',
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -75,9 +78,18 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', # 数据库引擎
+        'NAME': 'blog', # 数据库名
+        'USER': 'blog', # 账号
+        'PASSWORD': 'kx123456', # 密码
+        'HOST': '192.168.2.234', # HOST
+        'POST': 3306, # 端口
+
     }
+    #'sqlite': {
+    #    'ENGINE': 'django.db.backends.sqlite3',
+    #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    #}
 }
 
 # Password validation
@@ -109,20 +121,42 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
+
+TXT_PATH = os.path.join(BASE_DIR,'html')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/static/',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # django-haystack
 HAYSTACK_CONNECTIONS = {
+    #'default': {
+    #    'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+    #    'URL': 'http://192.168.2.245:9200/',
+    #    'INDEX_NAME': 'haystack',
+    #}
     'default': {
         'ENGINE': 'blog.whoosh_cn_backend.WhooshEngine',
         'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
     },
 }
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': '192.168.2.245:9200'
+    },
+}
+
+
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

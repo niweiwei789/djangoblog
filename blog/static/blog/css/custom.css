@@ -224,6 +224,8 @@ img {
     margin-bottom: 20px;
     line-height: 1.6;
     padding: 10px 20px 0;
+    font-weight: fold;
+    color: red;
 }
 
 .entry-meta {
@@ -244,7 +246,7 @@ img {
 .post-date::after,
 .post-author::after,
 .comments-link::after {
-    content: ' ·';
+    content: '.-';
     color: #000;
 }
 

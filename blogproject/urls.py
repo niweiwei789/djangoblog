@@ -13,17 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.urls import path, include,re_path
 from django.contrib import admin
 from django.http import HttpResponse
 
 from blog.feeds import AllPostsRssFeed
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'', include('blog.urls')),
-    url(r'', include('comments.urls')),
-    url(r'^robots\.txt$', lambda r: HttpResponse('User-agent: *\nDisallow: /', content_type='text/plain')),
-    url(r'^search/', include('haystack.urls')),
-    url(r'^all/rss/$', AllPostsRssFeed(), name='rss'),
+    path(r'admin/', admin.site.urls),
+    path(r'', include('blog.urls')),
+    path(r'', include('comments.urls')),
+    path(r'robots\.txt', lambda r: HttpResponse('User-agent: *\nDisallow: /', content_type='text/plain')),
+    path(r'search/', include('haystack.urls')),
+    path(r'all/rss/', AllPostsRssFeed(), name='rss'),
 ]

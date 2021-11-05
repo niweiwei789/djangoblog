@@ -1,14 +1,29 @@
-import markdown
+import markdown,time,os
+
+import pypinyin
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.six import python_2_unicode_compatible
+#from django.utils.six import python_2_unicode_compatible
 from django.utils.html import strip_tags
+from hashlib import md5
+from blogproject.settings import TXT_PATH
 
+from django.utils import timezone
+from blogproject.settings import BASE_DIR
+from tinymce.models import HTMLField
+
+
+
+def py(word):
+    s = ''
+    for i in pypinyin.pinyin(word, style=pypinyin.NORMAL):
+        s += ''.join(i)
+    return s
 
 # python_2_unicode_compatible 装饰器用于兼容 Python2
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Category(models.Model):
     """
     Django 要求模型必须继承 models.Model 类。
@@ -25,7 +40,7 @@ class Category(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Tag(models.Model):
     """
     标签 Tag 也比较简单，和 Category 一样。
@@ -37,7 +52,7 @@ class Tag(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Post(models.Model):
     """
     文章的数据库表稍微复杂一点，主要是涉及的字段更多。
@@ -48,11 +63,14 @@ class Post(models.Model):
 
     # 文章正文，我们使用了 TextField。
     # 存储比较短的字符串可以使用 CharField，但对于文章的正文来说可能会是一大段文本，因此使用 TextField 来存储大段文本。
-    body = models.TextField()
+    #body = HTMLField()
+
+    # 文章存放路径
+    url_path = models.CharField(max_length=70,default='')
 
     # 这两个列分别表示文章的创建时间和最后一次修改时间，存储时间的字段用 DateTimeField 类型。
-    created_time = models.DateTimeField()
-    modified_time = models.DateTimeField()
+    created_time = models.DateTimeField(default=timezone.now)
+    modified_time = models.DateTimeField(default=timezone.now)
 
     # 文章摘要，可以没有文章摘要，但默认情况下 CharField 要求我们必须存入数据，否则就会报错。
     # 指定 CharField 的 blank=True 参数值后就可以允许空值了。
@@ -68,14 +86,16 @@ class Post(models.Model):
     # 同时我们规定文章可以没有标签，因此为标签 tags 指定了 blank=True。
     # 如果你对 ForeignKey、ManyToManyField 不了解，请看教程中的解释，亦可参考官方文档：
     # https://docs.djangoproject.com/en/1.10/topics/db/models/#relationships
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True)
 
     # 文章作者，这里 User 是从 django.contrib.auth.models 导入的。
     # django.contrib.auth 是 Django 内置的应用，专门用于处理网站用户的注册、登录等流程，User 是 Django 为我们已经写好的用户模型。
     # 这里我们通过 ForeignKey 把文章和 User 关联了起来。
     # 因为我们规定一篇文章只能有一个作者，而一个作者可能会写多篇文章，因此这是一对多的关联关系，和 Category 类似。
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    #txt = models.FileField()
 
     def __str__(self):
         return self.title
@@ -85,6 +105,19 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('blog:detail', kwargs={'pk': self.pk})
 
+    def write_html(self):
+        wfd = open(BASE_DIR+'html'+self.title,'w')
+
+
+    #content = ''
+    @property
+    def content(self):
+        if os.path.exists(TXT_PATH+'/'+py(self.title)+'.txt'):
+            return open(TXT_PATH+'/'+py(self.title)+'.txt').read()
+        else:
+            return 'initial'
+
+
     class Meta:
         ordering = ['-created_time']
 
@@ -93,6 +126,8 @@ class Post(models.Model):
         self.save(update_fields=['views'])
 
     def save(self, *args, **kwargs):
+        #if self.title:
+        #    self.url_path = py(self.title) + '.txt'
         # 如果没有填写摘要
         if not self.excerpt:
             # 首先实例化一个 Markdown 类，用于渲染 body 的文本
@@ -103,7 +138,7 @@ class Post(models.Model):
             # 先将 Markdown 文本渲染成 HTML 文本
             # strip_tags 去掉 HTML 文本的全部 HTML 标签
             # 从文本摘取前 54 个字符赋给 excerpt
-            self.excerpt = strip_tags(md.convert(self.body))[:54]
+            #self.excerpt = strip_tags(md.convert(self.body))[:20]
 
         # 调用父类的 save 方法将数据保存到数据库中
         super(Post, self).save(*args, **kwargs)

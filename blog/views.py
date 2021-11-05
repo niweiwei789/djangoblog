@@ -189,7 +189,7 @@ def detail(request, pk):
     # 阅读量 +1
     post.increase_views()
 
-    post.body = markdown.markdown(post.body,
+    post.body = markdown.markdown(post.content,
                                   extensions=[
                                       'markdown.extensions.extra',
                                       'markdown.extensions.codehilite',
@@ -237,7 +237,7 @@ class PostDetailView(DetailView):
             'markdown.extensions.codehilite',
             TocExtension(slugify=slugify),
         ])
-        post.body = md.convert(post.body)
+        post.body = md.convert(post.content)
         post.toc = md.toc
         return post
 
